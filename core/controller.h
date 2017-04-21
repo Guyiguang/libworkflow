@@ -9,6 +9,7 @@
 SHARED_PTR(Controller);
 SHARED_PTR(ControllerSpawn);
 SHARED_PTR(Workflow);
+SHARED_PTR(Scheduler);
 
 /**
     Stores workflows, can add some meta data to requests.
@@ -16,6 +17,11 @@ SHARED_PTR(Workflow);
  */
 class Controller: public ActiveObject{
     std::map<std::string, WorkflowPtr> workflows;
+    SchedulerPtr scheduler;
+    //! allow not to expose unnecessary informations ... 
+    friend class Scheduler;
+    friend class Workflow;
+
 public:
     Controller(const std::string & name, uint32_t pool, bool delay_start = false);
     virtual ~Controller();
@@ -29,8 +35,6 @@ public:
     //! Note, default add only data to DefaultAction kind of request.
     virtual ControllerSpawnPtr spawnForRequest(RequestPtr);
     
-    //! this is used for a back propagation of request execution.
-    virtual void requestFinished(RequestPtr);
     
     //! Well retrieve requested workflow.
     WorkflowPtr getWorkflow(const std::string &) const;
@@ -42,19 +46,24 @@ public:
     void dropWorkflow(const std::string & key);
     
     const std::map<std::string, WorkflowPtr> & getWorkflows() const;
-};
 
-SHARED_PTR(TemporaryController);
-/**
- This kind of specific controller will simply get the workflow from the request and store it temporarily.
- */
-class TemporaryController : public Controller {
-public:
-    TemporaryController(uint32_t pool, bool delayed_start);
-    virtual ~TemporaryController();
-    
-    bool perform(RequestPtr) override;
-    void requestFinished(RequestPtr) override;
+    void setScheduler(SchedulerPtr);
+
+protected:
+    //! this is used for a back propagation of request execution.
+    //! Called by workflow only.
+    virtual void requestFinished(RequestPtr);
+
+    //! Execute a request.
+    //! Called by Scheduler
+    virtual void executeRequest(RequestPtr);
+
+    //! Order request interruption
+    //! Called by Scheduler.
+    virtual void interruptRequest(RequestPtr);
+
+    //! ensure appropriate init of scheduler.
+    void started() override;
 };
 
 OSTREAM_HELPER_DECL(Controller);

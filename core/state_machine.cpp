@@ -369,8 +369,10 @@ bool StateMachine::replyReceived(SessionPtr session, RequestPtr request) {
 bool StateMachine::executeAction(SessionPtr session, int32_t action_id)  {
     if(action_id == (int32_t) Step::Die) {
         auto wkf = getWorkflow().lock();
-        auto ctrl = wkf->getController().lock();
-        ctrl->requestFinished(session->getOriginalRequest());
+        if(wkf)
+            wkf->requestFinished(session->getOriginalRequest());
+        else 
+            BOOST_LOG_SEV(logger, Warn) << fingerprint(session) << " For some reason can't notify Workflow that we're finished with this request";
         return true;
     }
     

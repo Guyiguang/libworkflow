@@ -2,6 +2,7 @@
 #include <service/controller_manager.h>
 #include <service/client_manager.h>
 #include <core/controller.h>
+#include <core/temporary_controller.h>
 #include <service/actor.h>
 #include <boost/bind.hpp>
 #include <core/state_machine.h>

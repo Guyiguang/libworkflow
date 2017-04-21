@@ -75,6 +75,9 @@ public:
     
     //! main entrypoint of a workflow, will check executability and execute the request.
     bool perform(RequestPtr);
+
+    //! tell controller that we're finished with request's execution.
+    void requestFinished(RequestPtr);
     
     //! @return statemachine
     //! allow definition of the process to execute.
