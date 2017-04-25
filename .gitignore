@@ -4,6 +4,8 @@
 *.DS_Store
 *.sw*
 build/*
+cbuild/*
+.vimrc
 
 # Compiled Object files
 *.slo

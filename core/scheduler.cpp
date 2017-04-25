@@ -2,7 +2,6 @@
 #include <core/controller.h>
 #include <boost/uuid/uuid.hpp>
 #include <core/request.h>
-#include <boost/interprocess/sync/scoped_lock.hpp>
 
 Scheduler::Scheduler(ControllerPtr ctrl): Logged("ctrl.schd"), controller(ctrl) {
 }
@@ -12,6 +11,7 @@ Scheduler::~Scheduler() {
 
 bool Scheduler::addRequest(RequestPtr req) {
     getController()->executeRequest(req);
+    boost::recursive_mutex::scoped_lock lock(mutex);
     runningRequests[req->getId()] = req;
     return true;
 }
@@ -21,8 +21,8 @@ void Scheduler::interruptRequest(RequestPtr req) {
 }
 
 void Scheduler::requestPerformed(RequestPtr req) {
+    boost::recursive_mutex::scoped_lock lock(mutex);
     runningRequests.erase(req->getId());
-
 }
 
 void Scheduler::abortAll() {
@@ -33,3 +33,9 @@ void Scheduler::abortAll() {
 ControllerPtr Scheduler::getController() {
     return controller;
 }
+
+OSTREAM_HELPER_IMPL(Scheduler, obj) {
+    out << "[Scheduler]";
+    return out;
+}
+

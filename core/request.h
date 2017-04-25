@@ -54,27 +54,36 @@ public:
     
     static RequestPtr createReply(RequestPtr);
     
+    //! reference to an original Request.
     boost::uuids::uuid getRequestId() const;
+    //! this is unique id. 
     boost::uuids::uuid getId() const;
     
+    //! eight chars of request id
     std::string shortRequestId() const;
+    //! [R 12345678]
     std::string logRequest() const;
     
     void setId(const boost::uuids::uuid & id);
     void setRequestId(const boost::uuids::uuid & id);
     
+    //! Custom Workflow accessors
     const std::string & getWorkflowJson() const;
     void setWorkflowJson(const std::string & json);
     
+    //! Error Report accessors
     void setErrorReport(ErrorReportPtr);
     ErrorReportPtr getErrorReport() const;
     
+    //! Global Properties accessors
     PropertySetPtr getBypass() const;
     void setBypass(PropertySetPtr);
     
+    //! Action specific Properties
     PropertySetPtr getActionBypasses(int action_id);
     std::map<int32_t, PropertySetPtr> & getActionBypasses();
     
+    //! Context Accessors
     GroupedCtxPtr getContext() const;
     ContextPtr getContext(const std::string &) const;
     template<class T>
@@ -84,9 +93,11 @@ public:
     void setContext(const std::string &, ContextPtr);
     void setContext(const std::string &, Context *);
     
+    //! Controller Data accessors
     ControllerSpawnPtr getControllerSpawn() const ;
     void setControllerSpawn(ControllerSpawnPtr);
     
+    //! Posting Meta data accessors. 
     void setTarget(const Target & );
     void setReply(const Target & );
     
@@ -96,6 +107,7 @@ public:
     Target & getTarget();
     Target & getReply();
     
+    //! Serialization overides. 
     void save(boost::property_tree::ptree & root) const override;
     void load(const boost::property_tree::ptree & root) override;
 };

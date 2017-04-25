@@ -24,7 +24,6 @@ typedef boost::weak_ptr<Klass> __CAT(Klass,WPtr)
 //! Helper to declare an ostream operator for provided class.
 //! This will handle pointer, shared_ptr and const Klass &.
 #define OSTREAM_HELPER_DECL(Klass) \
-class Klass; \
 std::ostream& operator<<(std::ostream&, const Klass &); \
 std::ostream& operator<<(std::ostream&, Klass *); \
 SHARED_PTR(Klass); \

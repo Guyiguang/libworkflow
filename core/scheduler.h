@@ -23,9 +23,9 @@ SHARED_PTR(Controller);
 class Scheduler : public Logged {
     ControllerPtr controller;
 
-    std::map<boost::uuids::uuid,RequestPtr> runningRequests;
-
 protected:
+    //! maps id to requests. 
+    std::map<boost::uuids::uuid,RequestPtr> runningRequests;
     boost::recursive_mutex mutex;
 
 public:
@@ -43,10 +43,11 @@ public:
     virtual void abortAll();
 
 protected:
-    
     ControllerPtr getController();
 
 };
+
+OSTREAM_HELPER_DECL(Scheduler);
 
 #pragma GCC visibility pop
 

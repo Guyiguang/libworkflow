@@ -24,13 +24,15 @@ void Controller::started() {
 }   
 
 void Controller::setScheduler(SchedulerPtr schd) {
-    scheduler->abortAll();
+    if(scheduler)
+        scheduler->abortAll();
     scheduler = schd;
 }
 
 bool Controller::perform(RequestPtr request) {
     if(workflows.count(request->getTarget().workflow) > 0 ) {
         request->setControllerSpawn(spawnForRequest(request));
+        scheduler->addRequest(request);
         return true;
     }
     return false;
@@ -92,3 +94,4 @@ OSTREAM_HELPER_IMPL(Controller, obj) {
     out << "[Controller] name: " << obj.getName() << ", pool: " << obj.getPoolSize();
     return out;
 }
+
