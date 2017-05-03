@@ -56,6 +56,16 @@ const RunningSession & Workflow::getRunningSession(boost::uuids::uuid & id) cons
     return nullRunningSession;
 }
 
+void Workflow::requestFinished(RequestPtr rq) {
+    boost::interprocess::scoped_lock<boost::recursive_mutex> sl(*mutex);
+    auto ctrl = controller.lock();
+
+    if(ctrl)
+        ctrl->requestFinished(rq);
+    else
+        BOOST_LOG_SEV(logger, Warn) << "[" << getName() << "]"  << rq->logRequest() << " For some reason, can't notify Controller we're finished with this request ...";
+}
+
 bool Workflow::perform(RequestPtr request) {
     if(not request) {
         BOOST_LOG_SEV(logger, Error) << "[" << getName() << "]"  << "Ignored null request";
